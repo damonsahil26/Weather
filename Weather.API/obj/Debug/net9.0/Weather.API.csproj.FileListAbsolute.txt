@@ -33,3 +33,4 @@
 /Users/sahilmalhotra/Documents/Development/repos/Weather/Weather.API/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
 /Users/sahilmalhotra/Documents/Development/repos/Weather/Weather.API/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /Users/sahilmalhotra/Documents/Development/repos/Weather/Weather.API/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
+/Users/sahilmalhotra/Documents/Development/repos/Weather/Weather.API/obj/Debug/net9.0/Weather.API.sourcelink.json

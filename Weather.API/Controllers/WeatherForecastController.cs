@@ -1,4 +1,8 @@
+using System.Text.Json;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using Weather.API.Models;
 
 namespace Weather.API.Controllers;
 
@@ -12,21 +16,38 @@ public class WeatherForecastController : ControllerBase
     };
 
     private readonly ILogger<WeatherForecastController> _logger;
+    private readonly HttpClient _httpClient;
+    private readonly IConfiguration _configuration;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public WeatherForecastController(ILogger<WeatherForecastController> logger,
+        HttpClient httpClient,
+        IConfiguration configuration)
     {
         _logger = logger;
+        _httpClient = httpClient;
+        _configuration = configuration;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    public async Task<IActionResult> Get([FromQuery(Name = "city")] string city)
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        try
+        {
+            var query = new Dictionary<string, string> { { "key", _configuration["WEATHER_API_KEY"] ?? string.Empty } };
+            var url = QueryHelpers.AddQueryString($"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{city}", query);
+            var result = await _httpClient.GetAsync(url);
+            if (!result.IsSuccessStatusCode)
             {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+                return StatusCode(500);
+            }
+            
+            var weatherForecast = await JsonSerializer.DeserializeAsync<WeatherData>(await result.Content.ReadAsStreamAsync());
+            return Ok(weatherForecast);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }
