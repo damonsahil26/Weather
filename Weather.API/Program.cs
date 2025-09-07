@@ -1,3 +1,5 @@
+using StackExchange.Redis;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -9,6 +11,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpClient();
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var connectionMultiplexer = ConnectionMultiplexer
+        .Connect(builder.Configuration["redisConnectionString"] ?? "localhost");
+    
+    return connectionMultiplexer;
+});
 
 var app = builder.Build();
 
