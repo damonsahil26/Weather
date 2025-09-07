@@ -1,3 +1,5 @@
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +22,17 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
     return connectionMultiplexer;
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("fixed_window", config =>
+    {
+        config.Window = TimeSpan.FromSeconds(10);
+        config.PermitLimit = 5;
+        config.QueueLimit = 0;
+        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,6 +49,7 @@ app.UseSwaggerUI();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers()
+    .RequireRateLimiting("fixed_window");
 
 app.Run();
