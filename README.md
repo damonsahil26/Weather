@@ -2,7 +2,7 @@
 
 A simple **Weather API** built with **.NET 9 Web API** that fetches weather data from a 3rd party provider (e.g., [Visual Crossing Weather API](https://www.visualcrossing.com/weather-api)) and uses **Redis caching** for performance.  
 
-This project is made Roadmap project - https://roadmap.sh/projects/weather-api-wrapper-service
+This project is made for Roadmap project - https://roadmap.sh/projects/weather-api-wrapper-service
 
 This project is part of the **roadmap.sh community project** and focuses on:
 - ✅ Working with **3rd party APIs**  
